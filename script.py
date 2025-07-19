@@ -68,15 +68,28 @@ def add_words():
 
 def delete_words():
 
-    for deck in list(words.keys()):
-        print(f'"{deck}" ')
-        select_deck = str(input("Enter a deck name to delete: "))
-        if select_deck in words:
-            del words[select_deck]
-            print(f'Deck {select_deck} has been deleted')
-            json_object = json.dumps(words, indent=4)
-            with open("flashcards.json", "w") as json_file:
-                json_file.write(json_object)
+    # Delete a deck
+    delete_deck_or_words = str(input('Type "deck" or "word" for deletion: ')).strip().lower()
+    if delete_deck_or_words == "deck":
+        for deck in list(words.keys()):
+            print(f'"{deck}" ')
+            select_deck = str(input("Enter a deck name to delete: "))
+            if select_deck in words:
+                del words[select_deck]
+                print(f'Deck {select_deck} has been deleted')
+                json_object = json.dumps(words, indent=4)
+                with open("flashcards.json", "w") as json_file:
+                    json_file.write(json_object)
+            elif select_deck not in words:
+                print(f'Deck {select_deck} does not exist')
+                delete_words()
+
+    # Delete words from a deck
+    elif delete_deck_or_words == "word":
+
+
+
+
 
 
 
