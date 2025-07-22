@@ -19,7 +19,6 @@ def add_words():
         if deck not in words:
             print(f'Deck "{deck}" is selected')
             words[deck] = {}  # if deck is new initialize a dictionary
-
         # start filling a new deck
         filling = True
         while filling:
@@ -32,7 +31,6 @@ def add_words():
                     json_file.write(json_object)
             else:
                 print("This word already exists!")
-
             more = str(input("Do you want to add more? (y/n) ")).strip().lower()
             if more != "y":
                 filling = False
@@ -67,7 +65,6 @@ def add_words():
 
 
 def delete_words():
-
     # Delete a deck
     delete_deck_or_words = str(input('Type "deck" or "word" for deletion: ')).strip().lower()
     if delete_deck_or_words == "deck":
@@ -86,20 +83,12 @@ def delete_words():
 
     # Delete words from a deck
     elif delete_deck_or_words == "word":
+        for deck in list(words.keys()):
+            print(f'"{deck}" ')
+            select_deck = str(input("Enter a deck name to delete: "))
+            if select_deck in words:
+                print(f'Selected Deck: "{select_deck}" ')
 
-
-
-
-
-
-
-    # if word not in words:
-    #     print("You don't have that word!")
-    # else:
-    #     words.pop(word)
-    #     json_object = json.dumps(words, indent=4)
-    #     with open("flashcards.json", "w") as json_file:
-    #         json_file.write(json_object)
 
 
 # TODO 2 = create a function that starts the game
