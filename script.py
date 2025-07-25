@@ -1,4 +1,3 @@
-
 import json
 
 try:
@@ -10,6 +9,7 @@ except (FileNotFoundError, json.JSONDecodeError):
 def save_data():
     with open("flashcards.json", "w") as json_file:
         json.dump(words, json_file, indent=4)
+        
 
 def add_words():   # IS WORKING FINE
     prompt = str(input("Type 'n' for new deck or 'o' for old one ")).strip().lower()
@@ -41,7 +41,6 @@ def add_words():   # IS WORKING FINE
             print(f'Deck {deck} does not exist')
             add_words()
 
-        # start filling an old one  = IS WORKING
          filling = True
          while filling:
              word = str(input('Enter a word: ')).strip()
@@ -96,13 +95,36 @@ def delete_words():
 
 
 
+# TODO 1 which deck you want to practise
+# TODO 2 which side you want to practise
+def play():
+    for deck in words:
+        print(f'"{deck}"')
+    deck = str(input("Which deck do you want to play: ")).strip().lower()
+    if deck not in words:
+        print(f'Deck "{deck}" does not exist')
+    elif deck in words:
+        print(f'Deck "{deck}" is selected')
+        side = str(input('Which side do you want to play: "front" or "back" ?')).strip().lower()
+        if side == "front":
+            for word in words[deck]:
+                print(f'"{word}"')
+        elif side == "back":
+            for word in words[deck]:
+                print(f'"{words[deck][word]}"')
+
+
+
+
 # TODO 2 = create a function that starts the game
 def start():
-    add = str(input("Choose: 'add' or 'delete' ")).strip().lower()
+    add = str(input("Choose: 'add' 'delete' 'play' ")).strip().lower()
     if add == "add":
         add_words()
     elif add == "delete":
         delete_words()
+    elif add == "play":
+        play()
     else:
         print("Invalid input")
 
