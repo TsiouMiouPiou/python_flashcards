@@ -1,13 +1,14 @@
 {
     "deutsch": {
-        "hund": "skilos",
-        "katze": "gata",
-        "gata": "katze",
-        "dfk": "df",
-        "new": "kainourgio"
+        "philosophie": "philo",
+        "tisch": "trapezi",
+        "kourada": "megali"
     },
-    "tiere": {
-        "hund": "skilos]",
-        "katze": "gata"
+    "kurva": {
+        "philosophie": "philo"
+    },
+    "agglika": {
+        "hello": "geia",
+        "yo": "yoyo"
     }
 }
