@@ -1,8 +1,4 @@
-# TODO 3 = display all words in the dictionary
-# TODO 4 = predefine the article. if der die das then store it automatically
-# TODO 5 = create one dictionary for each type of word (noun, epi8eto, rima)
-# TODO 6 = create a function that shows only the one side of the card
-# TODO 7 optional -> give hints
+
 import json
 
 try:
@@ -11,6 +7,9 @@ try:
 except (FileNotFoundError, json.JSONDecodeError):
     words = {}  # start fresh if file not found or empty
 
+def save_data():
+    with open("flashcards.json", "w") as json_file:
+        json.dump(words, json_file, indent=4)
 
 def add_words():   # IS WORKING FINE
     prompt = str(input("Type 'n' for new deck or 'o' for old one ")).strip().lower()
@@ -26,9 +25,7 @@ def add_words():   # IS WORKING FINE
             if word not in words[deck]:
                 definition = input('Enter a definition: ').strip()
                 words[deck][word] = definition
-                json_object = json.dumps(words, indent=4)
-                with open("flashcards.json", "w") as json_file:
-                    json_file.write(json_object)
+                save_data()
             else:
                 print("This word already exists!")
             more = str(input("Do you want to add more? (y/n) ")).strip().lower()
@@ -51,9 +48,7 @@ def add_words():   # IS WORKING FINE
              if word not in words[deck]:
                  definition = input('Enter a definition: ').strip()
                  words[deck][word] = definition
-                 json_object = json.dumps(words, indent=4)
-                 with open("flashcards.json", "w") as json_file:
-                     json_file.write(json_object)
+                 save_data()
              else:
                  print("This word already exists!")
 
@@ -67,42 +62,37 @@ def add_words():   # IS WORKING FINE
 def delete_words():
     # Delete a deck
     delete_deck_or_words = str(input('Type "deck" or "word" for deletion: ')).strip().lower()
-    if delete_deck_or_words == "deck":
+    while delete_deck_or_words == "deck":
         for deck in words:
             print(f'Decks: "{deck}" ')
         select_deck = str(input("Enter a deck name to delete: "))
         if select_deck in words:
             del words[select_deck]
             print(f'Deck {select_deck} has been deleted')
-            json_object = json.dumps(words, indent=4)
-            with open("flashcards.json", "w") as json_file:
-                json_file.write(json_object)
+            save_data()
         elif select_deck not in words:
             print(f'Deck {select_deck} does not exist')
             delete_words()
 
     # Delete words from a deck
-    elif delete_deck_or_words == "word":
+    if delete_deck_or_words == "word":
         for deck in words:
             print(f'"{deck}" ')
         select_deck = str(input("Enter the deck name to delete the words from it: "))
         if select_deck in words:
             print(f'Selected Deck: "{select_deck}" ')
 
-        for select_deck in words[select_deck]:
-            print(f'"{select_deck}"')
+        for word in words[select_deck]:
+            print(f'"{word}"')
         select_word = str(input("Which word do you want to delete: "))
-        # Until here it works
+
         if select_word not in words[select_deck]:
             print(f'Word "{select_word}" does not exist')
             delete_words()
         elif select_word in words[select_deck]:
-
             del words[select_deck][select_word]
             print(f'Word "{select_word}" has been deleted')
-            json_object = json.dumps(words, indent=4)
-            with open("flashcards.json", 'w') as json_file:
-                json_file.write(json_object)
+            save_data()
 
 
 
