@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 import json
+import random
 
 try:
     with open("flashcards.json" , "r") as json_file:
@@ -95,8 +97,7 @@ def delete_words():
 
 
 
-# TODO 1 which deck you want to practise
-# TODO 2 which side you want to practise
+# TODO 1 PLay one side. If I found the word -> play that word in 5 days elif not -> play that word in 10 minutes -> show the next word in random() order
 def play():
     for deck in words:
         print(f'"{deck}"')
@@ -106,13 +107,33 @@ def play():
     elif deck in words:
         print(f'Deck "{deck}" is selected')
         side = str(input('Which side do you want to play: "front" or "back" ?')).strip().lower()
+        # FRONT SIDE
         if side == "front":
-            for word in words[deck]:
-                print(f'"{word}"')
-        elif side == "back":
-            for word in words[deck]:
-                print(f'"{words[deck][word]}"')
+                word_list = list(words[deck].keys())
+                random.shuffle(word_list)
+                counter = 0
+                for word in word_list: # word is the key
+                    print(f'"{word}"')
+                    answer = str(input('Which is the correct answer?: ')).strip().lower()
+                    if answer == words[deck][word]: # answer is the value
+                        print("Correct!")
+                        counter += 1
+                    # Then mark it as corrected and play it after 5 days
+                    else:
+                         print("Wrong!")
+                         counter = counter
+                total = len(word_list) # length of words that I played
+                percentage = counter / total * 100
+                print(f'You found {counter} words with {percentage:}% success')
+                # correct / total * 100
 
+        # BACK SIDE
+        else:
+            print("Invalid input!")
+
+        # elif side == "back":
+        #     for word in words[deck]:
+        #         print(f'"{words[deck][word]}"')
 
 
 

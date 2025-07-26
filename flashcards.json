@@ -2,7 +2,10 @@
     "deutsch": {
         "philosophie": "philo",
         "tisch": "trapezi",
-        "kourada": "megali"
+        "kourada": "megali",
+        "katze": "gata",
+        "hund": "skilos",
+        "glas": "potiri"
     },
     "kurva": {
         "philosophie": "philo"
