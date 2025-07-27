@@ -82,24 +82,26 @@ def delete_words():
 
     # Delete words from a deck
     if delete_deck_or_words == "word":
+        deleting = True
         for deck in words:
             print(f'"{deck}" ')
-        select_deck = str(input("Enter the deck name to delete the words from it: "))
+        select_deck = str(input("Enter the deck name to delete the words from it or type 'exit' to exit: "))
         if select_deck in words:
             print(f'Selected Deck: "{select_deck}" ')
-
-        for word in words[select_deck]:
-            print(f'"{word}"')
-        select_word = str(input("Which word do you want to delete: "))
-
-        if select_word not in words[select_deck]:
-            print(f'Word "{select_word}" does not exist')
-            delete_words()
-        elif select_word in words[select_deck]:
-            del words[select_deck][select_word]
-            print(f'Word "{select_word}" has been deleted')
-            save_data()
-
+        while deleting:
+            for word in words[select_deck]:
+                print(f'"{word}"')
+            select_word = str(input("Which word do you want to delete or type 'exit' to exit: "))
+            if select_word == "exit":
+                deleting = False
+                start()
+            elif select_word not in words[select_deck]:
+                print(f'Word "{select_word}" does not exist')
+                delete_words()
+            elif select_word in words[select_deck]:
+                del words[select_deck][select_word]
+                print(f'Word "{select_word}" has been deleted')
+                save_data()
 
 
 def play():
@@ -151,7 +153,7 @@ def play():
 
 
 def start():
-    add = str(input("Choose: 'add' 'delete' 'play' ")).strip().lower()
+    add = str(input("Choose:\n 1.add \n 2.delete \n 3.play ")).strip().lower()
     if add == "add":
         add_words()
     elif add == "delete":
