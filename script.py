@@ -9,8 +9,13 @@ except (FileNotFoundError, json.JSONDecodeError):
     words = {}  # start fresh if file not found or empty
 
 def save_data():
-    with open("flashcards.json", "w") as json_file:
-        json.dump(words, json_file, indent=4)
+    try:
+        with open("flashcards.json", "w")as json_file:
+            json.dump(words, json_file, indent=4)
+    except FileNotFoundError:
+        with open("flashcards.json", "w") as json_file:
+            json.dump(words, json_file, indent=4)
+
         
 
 def add_words():   # IS WORKING FINE
@@ -97,7 +102,6 @@ def delete_words():
 
 
 
-# TODO 1 PLay one side. If I found the word -> play that word in 5 days elif not -> play that word in 10 minutes -> show the next word in random() order
 def play():
     for deck in words:
         print(f'"{deck}"')
@@ -122,22 +126,30 @@ def play():
                     else:
                          print("Wrong!")
                          counter = counter
-                total = len(word_list) # length of words that I played
-                percentage = counter / total * 100
-                print(f'You found {counter} words with {percentage:}% success')
-                # correct / total * 100
+                    total = len(word_list) # length of words that I played
+                    percentage = counter / total * 100
+                    print(f'You found {counter} out of {total} words with {percentage:}% success')
 
         # BACK SIDE
-        else:
-            print("Invalid input!")
+        elif side == "back":
+            word_list = list(words[deck].keys())
+            random.shuffle(word_list)
+            counter = 0
+            for word in word_list:
+                print(f'"{words[deck][word]}"') # print the values or definition
+                answer = str(input('Which is the correct answer?: ')).strip().lower()
+                if answer == word:
+                    print("Correct!")
+                    counter += 1
+                else:
+                    print("Wrong!")
+                total = len(word_list)
+                percentage = counter / total * 100
+                print(f'You found {counter} out of {total} words, with {percentage:}% success rate')
 
-        # elif side == "back":
-        #     for word in words[deck]:
-        #         print(f'"{words[deck][word]}"')
 
 
 
-# TODO 2 = create a function that starts the game
 def start():
     add = str(input("Choose: 'add' 'delete' 'play' ")).strip().lower()
     if add == "add":
