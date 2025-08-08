@@ -18,7 +18,7 @@ def save_data():
 
         
 
-def add_words():   # IS WORKING FINE
+def add_words():
     prompt = str(input("Type 'n' for new deck or 'o' for old one ")).strip().lower()
     if prompt == "n":
         deck = str(input("Enter a deck name"))
@@ -38,7 +38,8 @@ def add_words():   # IS WORKING FINE
             more = str(input("Do you want to add more? (y/n) ")).strip().lower()
             if more != "y":
                 filling = False
-    elif prompt == "o":
+
+    elif prompt == "o": # if want to populate an old deck
          for deck in words:
             print(f'Decks: {deck}')
          deck = str(input("Enter an old deck"))
@@ -49,7 +50,7 @@ def add_words():   # IS WORKING FINE
             add_words()
 
          filling = True
-         while filling:
+         while filling: # start filling
              word = str(input('Enter a word: ')).strip()
              if word not in words[deck]:
                  definition = input('Enter a definition: ').strip()
@@ -121,15 +122,16 @@ def play():
                 for word in word_list: # word is the key
                     print(f'"{word}"')
                     answer = str(input('Which is the correct answer?: ')).strip().lower()
-                    if answer == words[deck][word]: # answer is the value
+                    if answer == words[deck][word]: # answer is the value -- if correct
                         print("Correct!")
                         counter += 1
+                        words[deck][word]["correct"] = True
                     # Then mark it as corrected and play it after 5 days
                     else:
                          print("Wrong!")
                          counter = counter
                     total = len(word_list) # length of words that I played
-                    percentage = counter / total * 100
+                    percentage = counter / total * 100 # calculate the percentage
                     print(f'You found {counter} out of {total} words with {percentage:}% success')
 
         # BACK SIDE
