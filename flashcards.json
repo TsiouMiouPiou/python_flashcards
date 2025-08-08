@@ -1,14 +1,36 @@
 {
     "deutsch": {
-        "philosophie": "philo",
-        "hund": "skilos",
-        "glas": "potiri"
+        "philosophie": {
+            "definition": "philo",
+            "next_review": "2025-08-13"
+        },
+        "hund": {
+            "definition": "skilos",
+            "next_review": "2025-08-13"
+        },
+        "glas": {
+            "definition": "potiri",
+            "next_review": "2025-08-13"
+        }
     },
     "kurva": {
-        "philosophie": "philo"
+        "philosophie": {
+            "definition": "philo",
+            "next_review": "2025-08-08"
+        },
+        "handy": {
+            "definition": "kinito",
+            "next_review": "2025-08-08"
+        }
     },
     "agglika": {
-        "hello": "geia",
-        "yo": "yoyo"
+        "hello": {
+            "definition": "geia",
+            "next_review": "2025-08-08"
+        },
+        "yo": {
+            "definition": "yoyo",
+            "next_review": "2025-08-08"
+        }
     }
 }
