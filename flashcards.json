@@ -1,36 +1,24 @@
 {
     "deutsch": {
-        "philosophie": {
-            "definition": "philo",
-            "next_review": "2025-08-13"
+        "klavier": {
+            "definition": "piano",
+            "next_review": "2025-08-16 14:57:49"
         },
-        "hund": {
-            "definition": "skilos",
-            "next_review": "2025-08-13"
-        },
-        "glas": {
-            "definition": "potiri",
-            "next_review": "2025-08-13"
-        }
-    },
-    "kurva": {
-        "philosophie": {
-            "definition": "philo",
-            "next_review": "2025-08-08"
+        "kinderwagen": {
+            "definition": "karotsaki",
+            "next_review": "2025-08-16 14:57:58"
         },
         "handy": {
             "definition": "kinito",
-            "next_review": "2025-08-08"
-        }
-    },
-    "agglika": {
-        "hello": {
-            "definition": "geia",
-            "next_review": "2025-08-08"
+            "next_review": "2025-08-16 14:57:32"
         },
-        "yo": {
-            "definition": "yoyo",
-            "next_review": "2025-08-08"
+        "katze": {
+            "definition": "gata",
+            "next_review": "2025-08-11 15:02:45"
+        },
+        "einrichtung": {
+            "definition": "epipla",
+            "next_review": "2025-08-16 14:57:54"
         }
     }
 }

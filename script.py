@@ -1,176 +1,213 @@
 from datetime import datetime, timedelta
 import json
 import random
-import os
 
+DATE_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 DATA_FILE = "flashcards.json"
+# Load data from JSON or start fresh
+try:
+    with open("flashcards.json", "r") as json_file:
+        words = json.load(json_file)
+except (FileNotFoundError, json.JSONDecodeError):
+    words = {}
 
-# ---------- Load Data ----------
-def load_data():
-    if not os.path.exists(DATA_FILE):
-        return {}
-    try:
-        with open(DATA_FILE, "r") as json_file:
-            data = json.load(json_file)
-            # Ensure backward compatibility with old format
-            for deck in data:
-                for word, val in list(data[deck].items()):
-                    if isinstance(val, str):  # old format: definition only
-                        data[deck][word] = {
-                            "definition": val,
-                            "next_review": datetime.now().strftime("%Y-%m-%d")
-                        }
-                    elif "next_review" not in val:
-                        val["next_review"] = datetime.now().strftime("%Y-%m-%d")
-            return data
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {}
-
-# ---------- Save Data ----------
 def save_data():
-    with open(DATA_FILE, "w") as json_file:
-        json.dump(words, json_file, indent=4)
+    try:
+        with open("flashcards.json", "w") as json_file:
+            json.dump(words, json_file, indent=4)
+    except FileNotFoundError:
+        with open("flashcards.json", "w") as json_file:
+            json.dump(words, json_file, indent=4)
 
-# ---------- Add Words ----------
 def add_words():
     prompt = input("Type 'n' for new deck or 'o' for old one: ").strip().lower()
     if prompt == "n":
         deck = input("Enter a deck name: ").strip()
         if deck not in words:
+            print(f'Deck "{deck}" is selected')
             words[deck] = {}
-            print(f'Deck "{deck}" is created')
         else:
             print(f'Deck "{deck}" already exists, adding words to it...')
-        fill_deck(deck)
+
+        filling = True
+        while filling:
+            word = input('Enter a word: ').strip()
+            if word not in words[deck]:
+                definition = input('Enter a definition: ').strip()
+                words[deck][word] = {
+                    "definition": definition,
+                    "next_review": datetime.now().strftime(DATE_TIME_FORMAT)
+                }
+                save_data()
+            else:
+                print("This word already exists!")
+            more = input("Do you want to add more? (y/n): ").strip().lower()
+            if more != "y":
+                filling = False
 
     elif prompt == "o":
         if not words:
-            print("No decks exist yet!")
+            print("No decks available. Please create a new deck first.")
             return
-        for deck in words:
-            print(f'- {deck}')
-        deck = input("Enter an old deck name: ").strip()
+        for d in words:
+            print(f'- {d}')
+        deck = input("Enter an old deck: ").strip()
         if deck in words:
-            fill_deck(deck)
+            print(f'Deck "{deck}" is selected')
+            filling = True
+            while filling:
+                word = input('Enter a word: ').strip()
+                if word not in words[deck]:
+                    definition = input('Enter a definition: ').strip()
+                    words[deck][word] = {
+                        "definition": definition,
+                        "next_review": datetime.now().strftime(DATE_TIME_FORMAT)
+                    }
+                    save_data()
+                else:
+                    print("This word already exists!")
+                more = input("Do you want to add more? (y/n): ").strip().lower()
+                if more != "y":
+                    filling = False
         else:
-            print(f'Deck "{deck}" does not exist')
+            print(f'Deck "{deck}" does not exist.')
 
-def fill_deck(deck):
-    while True:
-        word = input('Enter a word: ').strip()
-        if word not in words[deck]:
-            definition = input('Enter a definition: ').strip()
-            words[deck][word] = {
-                "definition": definition,
-                "next_review": datetime.now().strftime("%Y-%m-%d")
-            }
-            save_data()
-        else:
-            print("This word already exists!")
-        more = input("Do you want to add more? (y/n): ").strip().lower()
-        if more != "y":
-            break
-
-# ---------- Delete ----------
 def delete_words():
     choice = input('Type "deck" or "word" for deletion: ').strip().lower()
     if choice == "deck":
-        for deck in words:
-            print(f'- {deck}')
+        if not words:
+            print("No decks available to delete.")
+            return
+        for d in words:
+            print(f'- {d}')
         deck = input("Enter a deck name to delete: ").strip()
         if deck in words:
             del words[deck]
             save_data()
-            print(f'Deck "{deck}" deleted')
+            print(f'Deck "{deck}" has been deleted.')
         else:
-            print("Deck not found")
+            print(f'Deck "{deck}" does not exist.')
+
     elif choice == "word":
-        for deck in words:
-            print(f'- {deck}')
-        deck = input("Enter the deck to delete words from: ").strip()
+        if not words:
+            print("No decks available.")
+            return
+        for d in words:
+            print(f'- {d}')
+        deck = input("Enter the deck name to delete words from or type 'exit': ").strip()
+        if deck == "exit":
+            return
         if deck not in words:
-            print("Deck not found")
+            print(f'Deck "{deck}" does not exist.')
             return
         while True:
-            for word in words[deck]:
-                print(f'- {word}')
-            w = input("Enter the word to delete or 'exit': ").strip()
-            if w.lower() == "exit":
+            if not words[deck]:
+                print(f'Deck "{deck}" is empty.')
                 break
-            if w in words[deck]:
-                del words[deck][w]
+            for w in words[deck]:
+                print(f'- {w}')
+            word = input("Enter the word to delete or type 'exit': ").strip()
+            if word == "exit":
+                break
+            if word in words[deck]:
+                del words[deck][word]
                 save_data()
-                print(f'Word "{w}" deleted')
+                print(f'Word "{word}" deleted.')
             else:
-                print("Word not found")
+                print(f'Word "{word}" does not exist.')
 
-# ---------- Play ----------
 def play():
     if not words:
-        print("No decks exist yet!")
+        print("No decks available to play.")
         return
 
     for deck in words:
         print(f'- {deck}')
-    deck = input("Which deck do you want to play: ").strip()
+    deck = input("Which deck do you want to play: ").strip().lower()
+
     if deck not in words:
-        print("Deck not found")
+        print(f'Deck "{deck}" does not exist.')
+        return
+
+    print(f'Deck "{deck}" is selected')
+
+    now = datetime.now()
+    due_words = [
+        word for word, data in words[deck].items()
+        if datetime.strptime(data["next_review"], DATE_TIME_FORMAT) <= now
+    ]
+
+    if not due_words:
+        print("No cards are due for review right now.")
         return
 
     side = input('Which side do you want to play: "front" or "back"? ').strip().lower()
-    today = datetime.now().date()
-    word_list = [
-        w for w, data in words[deck].items()
-        if datetime.strptime(data["next_review"], "%Y-%m-%d").date() <= today
-    ]
-
-    if not word_list:
-        print("No words are due for review today!")
-        return
-
-    random.shuffle(word_list)
+    random.shuffle(due_words)
     counter = 0
 
-    for word in word_list:
-        if side == "front":
+    if side == "front":
+        for word in due_words:
             print(f'"{word}"')
-            answer = input('Which is the correct answer?: ').strip().lower()
-            if answer == words[deck][word]["definition"].lower():
-                print("✅ Correct!")
+            answer = input('Which is the correct definition?: ').strip().lower()
+            correct_answer = words[deck][word]["definition"].lower()
+            if answer == correct_answer:
+                print("Correct!")
                 counter += 1
-                words[deck][word]["next_review"] = (datetime.now() + timedelta(days=5)).strftime("%Y-%m-%d")
+                # IF CORRECT PLAY THE CARD AFTER 5 DAYS
+                words[deck][word]["next_review"] = (datetime.now() + timedelta(days=5)).strftime(DATE_TIME_FORMAT)
             else:
-                print(f"❌ Wrong! Correct answer: {words[deck][word]['definition']}")
-        elif side == "back":
+                print(f"Wrong! Correct answer: {words[deck][word]['definition']}")
+                # IF WRONG PLAY AFTER 5 MINS
+                words[deck][word]["next_review"] = (datetime.now() + timedelta(minutes=5)).strftime(DATE_TIME_FORMAT)
+
+    elif side == "back":
+        for word in due_words:
             print(f'"{words[deck][word]["definition"]}"')
-            answer = input('Which is the correct answer?: ').strip().lower()
+            answer = input('Which is the correct word?: ').strip().lower()
             if answer == word.lower():
-                print("✅ Correct!")
+                print("Correct!")
                 counter += 1
-                words[deck][word]["next_review"] = (datetime.now() + timedelta(days=5)).strftime("%Y-%m-%d")
+                words[deck][word]["next_review"] = (datetime.now() + timedelta(days=5)).strftime(DATE_TIME_FORMAT)
             else:
-                print(f"❌ Wrong! Correct answer: {word}")
+                print(f"Wrong! Correct answer: {word}")
+                words[deck][word]["next_review"] = (datetime.now() + timedelta(minutes=5)).strftime(DATE_TIME_FORMAT)
+
+    total = len(due_words)
+    percentage = counter / total * 100
+    print(f'You found {counter} out of {total} words with {percentage:.2f}% success rate')
 
     save_data()
-    total = len(word_list)
-    percentage = counter / total * 100
-    print(f'\n📊 You got {counter}/{total} correct ({percentage:.1f}%)')
 
-# ---------- Menu ----------
+def show():
+    if not words:
+        print("No decks to show.")
+        return
+    for deck, cards in words.items():
+        print(f"Deck: {deck}")
+        for word, info in cards.items():
+            definition = info["definition"]
+            next_review = info["next_review"]
+            print(f"  Word: {word}")
+            print(f"    Definition: {definition}")
+            print(f"    Next Review: {next_review}")
+
 def start():
     while True:
-        choice = input("\nChoose:\n 1. add \n 2. delete \n 3. play \n 4. quit\n> ").strip().lower()
-        if choice in ["1", "add"]:
+        option = input(
+            "Choose:\n 1.add \n 2.delete \n 3.play \n 4.show \n 5.quit\n"
+        ).strip().lower()
+        if option == "1" or option == "add":
             add_words()
-        elif choice in ["2", "delete"]:
+        elif option == "2" or option == "delete":
             delete_words()
-        elif choice in ["3", "play"]:
+        elif option == "3" or option == "play":
             play()
-        elif choice in ["4", "quit", "q"]:
+        elif option == "4" or option == "show":
+            show()
+        elif option == "5" or option == "quit":
+            print("Goodbye!")
             break
         else:
-            print("Invalid choice")
+            print("Invalid input, please try again.")
 
-# ---------- Run ----------
-words = load_data()
 start()
